@@ -43,7 +43,7 @@ resource "aws_instance" "private_ec2" {
   user_data = <<-EOF
               #!/bin/bash
               sudo yum update -y
-              sudo yum install -y nginx
+              sudo amazon-linux-extras install nginx1 -y
               sudo systemctl enable nginx
               sudo systemctl start nginx
               sudo echo "Hello from private EC2 instance ${count.index + 1}" > /usr/share/nginx/html/index.html

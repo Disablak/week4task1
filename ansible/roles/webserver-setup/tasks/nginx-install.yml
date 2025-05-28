@@ -12,10 +12,9 @@
     owner: ec2-user
     group: ec2-user
     mode: '0644'
-  notify: reload nginx
 
-- name: Ensure Nginx is started and enabled
-  service:
+- name: Ensure nginx is started and enabled
+  systemd:
     name: nginx
     state: started
-    enabled: true
+    enabled: yes

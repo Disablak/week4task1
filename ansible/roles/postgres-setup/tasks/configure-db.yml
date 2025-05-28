@@ -1,7 +1,6 @@
 ---
 - name: "Create app database"
   postgresql_db:
-    state: present
     name: "{{ db_name }}"
   become_user: postgres
 
@@ -15,7 +14,7 @@
 - name: "Grant db user access to app db"
   postgresql_privs:
     type: database
-    database: "{{ db_name }}"
+    login_db: "{{ db_name }}"
     roles: "{{ db_user }}"
     grant_option: no
     privs: all

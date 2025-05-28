@@ -12,6 +12,11 @@
   args:
     creates: /opt/myapp/venv
 
+- name: Install python-dotenv with pip in venv
+  ansible.builtin.pip:
+    name: python-dotenv
+    virtualenv: /opt/myapp/venv
+
 - name: Install app requirements
   pip:
     requirements: /opt/myapp/requirements.txt

@@ -11,13 +11,22 @@
     password: "{{ db_password }}"
   become_user: postgres
 
-- name: "Grant db user access to app db"
-  postgresql_privs:
-    type: database
+- name: GRANT ALL PRIVILEGES ON DATABASE to the user
+  community.postgresql.postgresql_privs:
     login_db: "{{ db_name }}"
-    roles: "{{ db_user }}"
-    grant_option: no
-    privs: all
+    privs: ALL
+    type: database
+    #obj: library
+    role: "{{ db_user }}"
+  become_user: postgres
+
+- name: GRANT ALL PRIVILEGES ON SCHEMA public to the user
+  community.postgresql.postgresql_privs:
+    login_db: "{{ db_name }}"
+    privs: ALL
+    type: schema
+    objs: public
+    role: "{{ db_user }}"
   become_user: postgres
 
 - name: "Allow md5 connection for the db user"

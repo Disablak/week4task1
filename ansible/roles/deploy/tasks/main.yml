@@ -3,3 +3,17 @@
   template:
     src: env.j2
     dest: /opt/myapp/.env
+    owner: ec2-user
+    group: ec2-user
+    mode: '0755'
+
+- name: Run Django migrate with environment
+  ansible.builtin.shell:
+    python /opt/myapp/manage.py migrate
+  environment:
+    PATH: "/opt/myapp/venv/bin:{{ ansible_env.PATH }}"
+    VIRTUAL_ENV: "/opt/myapp/venv"
+
+# add superuser
+# restart gunicorn
+# restart nginx

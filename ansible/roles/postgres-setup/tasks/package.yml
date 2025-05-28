@@ -19,17 +19,44 @@
   with_items:
     - postgresql15
     - postgresql15-server
-
+  
 - name: "Find out if PostgreSQL is initialized"
   ansible.builtin.stat:
     path: "/var/lib/pgsql/data/pg_hba.conf"
   register: postgres_data
 
 - name: "Initialize PostgreSQL"
-  shell: "postgresql-setup initdb"
+  shell: "postgresql-setup initdb" # HOW TO REPLACE IT??
   when: not postgres_data.stat.exists
+
+# - name: "Find out if PostgreSQL is initialized"
+#   ansible.builtin.stat:
+#     path: "/var/lib/pgsql/data/pg_hba.conf"
+#   register: postgres_data
 
 - name: "Start and enable services"
   service: "name={{ item }} state=started enabled=yes"
   with_items:
     - postgresql
+
+# - name: Enable and start PostgreSQL service
+#   systemd:
+#     name: postgresql
+#     enabled: yes
+#     state: started
+
+- name: Set listen_addresses to '*'
+  ansible.builtin.lineinfile:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: '^#?listen_addresses\s*='
+    line: "listen_addresses = '*'"
+    state: present
+    backup: yes
+
+- name: Allow all remote connections in pg_hba.conf
+  ansible.builtin.lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    line: 'host    all             all             0.0.0.0/0               md5'
+    state: present
+    create: yes
+    backup: yes

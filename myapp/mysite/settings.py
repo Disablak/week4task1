@@ -17,6 +17,10 @@ from urllib.parse import urlparse
 
 from django.core.management.utils import get_random_secret_key
 
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,9 +35,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-
-
-# Application definition
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 INSTALLED_APPS = [
     "polls.apps.PollsConfig",

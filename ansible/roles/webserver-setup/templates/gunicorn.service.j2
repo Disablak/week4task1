@@ -8,7 +8,7 @@ Group=ec2-user
 WorkingDirectory=/opt/myapp
 Environment="PATH=/opt/myapp/venv/bin"
 EnvironmentFile=/opt/myapp/.env
-ExecStart=/opt/myapp/venv/bin/gunicorn mysite.wsgi:application --bind 127.0.0.1:8000
+ExecStart=/opt/myapp/venv/bin/gunicorn --bind unix:/opt/myapp/gunicorn.sock mysite.wsgi:application
 
 [Install]
 WantedBy=multi-user.target

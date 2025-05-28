@@ -4,11 +4,6 @@
     name: nginx
     state: reloaded
 
-- name: restart django
-  systemd:
-    name: myapp
-    state: restarted
-
 - name: restart gunicorn
   systemd:
     name: gunicorn

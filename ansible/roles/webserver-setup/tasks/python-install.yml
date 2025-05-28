@@ -17,8 +17,27 @@
     requirements: /opt/myapp/requirements.txt
     virtualenv: /opt/myapp/venv
 
+- name: Set permission execute on manage.py
+  file:
+    path: /opt/myapp/manage.py
+    owner: ec2-user
+    group: ec2-user
+    mode: '0755'
+
+- name: Run Django collectstatic
+  community.general.django_manage:
+    command: collectstatic --noinput
+    project_path: /opt/myapp
+    virtualenv: /opt/myapp/venv
+
 - name: Set up Gunicorn systemd service
   template:
     src: gunicorn.service.j2
     dest: /etc/systemd/system/gunicorn.service
-  notify: restart gunicorn
+#  notify: restart gunicorn
+
+- name: Enable and start Gunicorn service
+  systemd:
+    name: gunicorn
+    enabled: yes
+    state: started

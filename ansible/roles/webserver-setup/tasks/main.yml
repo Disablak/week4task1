@@ -1,7 +1,7 @@
 ---
-- name: Print EC2 public IP from inventory
-  debug:
-    msg: "{{ inventory_hostname }}"
+# - name: Print EC2 public IP from inventory
+#   debug:
+#     msg: "{{ inventory_hostname }}"
 
 - name: Update yum cache
   yum:

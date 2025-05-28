@@ -14,14 +14,8 @@
     mode: '0644'
   notify: reload nginx
 
-# - name: Enable site
-#   file:
-#     src: /etc/nginx/conf.d/myapp.conf
-#     dest: /etc/nginx/sites-enabled/sample
-#     state: link
-
-# - name: Ensure Nginx is started and enabled
-#   service:
-#     name: nginx
-#     state: started
-#     enabled: true
+- name: Ensure Nginx is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: true

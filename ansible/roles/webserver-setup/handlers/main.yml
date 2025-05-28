@@ -8,3 +8,9 @@
   systemd:
     name: myapp
     state: restarted
+
+- name: restart gunicorn
+  systemd:
+    name: gunicorn
+    state: restarted
+    enabled: yes

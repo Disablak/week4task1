@@ -1,0 +1,24 @@
+---
+- name: Install Python packages
+  dnf:
+    name:
+      - python3
+      - python3-pip
+      - python3-virtualenv
+    state: present
+
+- name: Create virtual environment
+  command: python3 -m venv /opt/myapp/venv
+  args:
+    creates: /opt/myapp/venv
+
+- name: Install app requirements
+  pip:
+    requirements: /opt/myapp/requirements.txt
+    virtualenv: /opt/myapp/venv
+
+- name: Set up Gunicorn systemd service
+  template:
+    src: gunicorn.service.j2
+    dest: /etc/systemd/system/gunicorn.service
+  notify: restart gunicorn

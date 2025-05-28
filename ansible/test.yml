@@ -1,4 +1,4 @@
 - hosts: web
-  become: true  # if your role needs root privileges
+  become: true
   roles:
     - role: webserver-setup

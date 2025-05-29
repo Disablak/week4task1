@@ -7,7 +7,7 @@
     group: ec2-user
     mode: '0755'
 
-# using shell is bad
+# i know using shell is bad
 - name: Run Django migrate with environment
   shell:
     python /opt/myapp/manage.py migrate
@@ -16,7 +16,7 @@
     VIRTUAL_ENV: "/opt/myapp/venv"
   when: "'web-db-migrate' in group_names"
 
-# using shell is bad
+# i know using shell is bad
 - name: Create Django superuser non-interactively
   shell: |
     echo "
@@ -32,9 +32,20 @@
     VIRTUAL_ENV: "/opt/myapp/venv"
   when: "'web-db-migrate' in group_names"
 
+- name: Run Django collectstatic
+  community.general.django_manage:
+    command: collectstatic --noinput
+    project_path: /opt/myapp
+    virtualenv: /opt/myapp/venv
+
 - name: Restart gunicorn service
   systemd:
     name: gunicorn
+    state: restarted
+
+- name: Restart nginx service
+  systemd:
+    name: nginx
     state: restarted
 
 # push to github

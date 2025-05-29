@@ -29,12 +29,6 @@
     group: ec2-user
     mode: '0755'
 
-- name: Run Django collectstatic
-  community.general.django_manage:
-    command: collectstatic --noinput
-    project_path: /opt/myapp
-    virtualenv: /opt/myapp/venv
-
 - name: Set up Gunicorn systemd service
   template:
     src: gunicorn.service.j2

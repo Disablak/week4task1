@@ -13,8 +13,8 @@
     group: ec2-user
     mode: '0644'
 
-- name: Ensure nginx is started and enabled
-  systemd:
-    name: nginx
-    state: started
-    enabled: yes
+# - name: Ensure nginx is started and enabled
+#   systemd:
+#     name: nginx
+#     state: started
+#     enabled: yes

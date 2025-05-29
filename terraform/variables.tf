@@ -12,6 +12,10 @@ variable "private_subnet_cidrs" {
 }
 
 # EC2
+variable "my_public_ip_for_bastion" {
+  default = "185.16.127.225/32"
+}
+
 variable "instance_type" {
   default = "t2.micro"
 }

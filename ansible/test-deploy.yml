@@ -1,5 +1,5 @@
 ---
 - hosts: web
-  become: true
+  become: yes
   roles:
     - deploy

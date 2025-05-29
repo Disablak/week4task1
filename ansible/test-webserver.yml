@@ -1,4 +1,4 @@
 - hosts: web
-  become: true
+  become: yes
   roles:
     - role: webserver-setup

@@ -7,13 +7,30 @@
     group: ec2-user
     mode: '0755'
 
+# using shell is bad
 - name: Run Django migrate with environment
-  ansible.builtin.shell:
+  shell:
     python /opt/myapp/manage.py migrate
   environment:
     PATH: "/opt/myapp/venv/bin:{{ ansible_env.PATH }}"
     VIRTUAL_ENV: "/opt/myapp/venv"
 
-# add superuser
-# restart gunicorn
-# restart nginx
+# using shell is bad
+- name: Create Django superuser non-interactively 
+  shell: |
+    echo "
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    if not User.objects.filter(username='{{ site_superuser_login }}').exists():
+        User.objects.create_superuser('{{ site_superuser_login }}', '{{ site_superuser_mail }}', '{{ site_superuser_password }}')
+    " | python manage.py shell
+  args:
+    chdir: /opt/myapp
+  environment:
+    PATH: "/opt/myapp/venv/bin:{{ ansible_env.PATH }}"
+    VIRTUAL_ENV: "/opt/myapp/venv"
+
+- name: Restart gunicorn service
+  systemd:
+    name: gunicorn
+    state: restarted

@@ -1,5 +1,8 @@
 db_user: myuser
 db_password: mypassword
 db_name: mydatabase
-db_host: 3.83.41.163
+db_host: 18.206.121.215
 db_port: 5432
+site_superuser_login: admin
+site_superuser_mail: admin@example.com
+site_superuser_password: adminpassword

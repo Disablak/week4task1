@@ -16,7 +16,6 @@
     login_db: "{{ db_name }}"
     privs: ALL
     type: database
-    #obj: library
     role: "{{ db_user }}"
   become_user: postgres
 

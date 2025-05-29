@@ -1,9 +1,7 @@
 db_user: myuser
 db_password: mypassword
 db_name: mydatabase
-db_host: 10.0.103.250
 db_port: 5432
-lb_dns: http://app-alb-2044216859.us-east-1.elb.amazonaws.com
 site_superuser_login: admin
 site_superuser_mail: admin@example.com
 site_superuser_password: adminpassword

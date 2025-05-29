@@ -14,7 +14,7 @@
   environment:
     PATH: "/opt/myapp/venv/bin:{{ ansible_env.PATH }}"
     VIRTUAL_ENV: "/opt/myapp/venv"
-  when: "'db-merge' in group_names"
+  when: "'web-db-migrate' in group_names"
 
 # using shell is bad
 - name: Create Django superuser non-interactively
@@ -30,9 +30,11 @@
   environment:
     PATH: "/opt/myapp/venv/bin:{{ ansible_env.PATH }}"
     VIRTUAL_ENV: "/opt/myapp/venv"
-  when: "'db-merge' in group_names"
+  when: "'web-db-migrate' in group_names"
 
 - name: Restart gunicorn service
   systemd:
     name: gunicorn
     state: restarted
+
+# push to github

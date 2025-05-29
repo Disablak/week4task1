@@ -1,0 +1,14 @@
+- hosts: web
+  become: yes
+  roles:
+    - role: webserver-setup
+
+- hosts: db
+  become: yes
+  roles:
+    - postgres-setup
+
+- hosts: web
+  become: yes
+  roles:
+    - deploy

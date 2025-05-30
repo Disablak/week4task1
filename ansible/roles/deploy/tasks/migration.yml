@@ -15,7 +15,7 @@
 
 - name: Create an initial superuser
   community.general.django_manage:
-    command: "createsuperuser --noinput"
+    command: createsuperuser --noinput
     project_path: /opt/myapp
     virtualenv: /opt/myapp/venv
   when: "'web-db-migrate' in group_names"
@@ -25,6 +25,18 @@
     command: collectstatic --noinput
     project_path: /opt/myapp
     virtualenv: /opt/myapp/venv
+
+- name: Configurate Django
+  django_configurator:
+    path_to_env_file: /opt/myapp/.env
+    environment: prod
+    additional_settings:
+      DEVELOPMENT_MODE: True
+  register: config_result
+
+- name: Output Configuration Result
+  debug:
+    msg: "{{ config_result.msg }}"
 
 - name: Restart gunicorn service
   systemd:

@@ -1,4 +1,5 @@
-# Scenario:
+# Task 1
+## Scenario:
 
 Imagine you're a DevOps engineer tasked to deploy and set up servers for a new application that requires a database. For this, we'll be deploying a Django sample app from the DigitalOcean team: https://github.com/digitalocean/sample-django.
 
@@ -15,5 +16,14 @@ For Ansible, you need to create three roles - two for setting up the infrastruct
 
 Run these roles using the AWS EC2 System Manager. 
 
-# Task completion:
+## Task completion:
 https://docs.google.com/document/d/1BE3MdGhukvbN6iVB2hzCNCwB3pPwYnrXxV5SxsuHLq4/edit?usp=sharing
+
+
+# Task 2 Develop a Custom Ansible Module for Django Application Configuration
+## Scenario:
+
+After deploying the infrastructure and setting up the basic environment with Terraform and Ansible, the next step is to ensure that the Django application is correctly configured to connect to the newly set up database and operate under the specified environment settings (e.g., DEBUG mode, allowed hosts, database settings).
+
+## Task completion:
+https://docs.google.com/document/d/1ATQISOUkOYWMuDYYnykUJiQSerAz2Qp0SntUlb_Yx3E/edit?usp=sharing

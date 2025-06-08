@@ -1,14 +1,19 @@
 resource "aws_security_group" "alb_sg" {
   name        = "alb-sg"
-  description = "Allow HTTP traffic"
+  description = "Only allow traffic from CloudFront"
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "Allow HTTP from anywhere"
+    description = "Allow HTTP from CloudFront"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [
+      "13.32.0.0/15",
+      "52.46.0.0/18",
+      "205.251.192.0/19",
+      "54.239.128.0/18"
+    ]
   }
 
   egress {

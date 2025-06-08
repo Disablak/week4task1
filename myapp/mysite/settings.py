@@ -38,10 +38,6 @@ ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split("
 
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "localhost").split(",")
 
-DJANGO_SUPERUSER_USERNAME = os.getenv("DJANGO_SUPERUSER_USERNAME", "admin")
-DJANGO_SUPERUSER_EMAIL = os.getenv("DJANGO_SUPERUSER_EMAIL", "admin@test.com")
-DJANGO_SUPERUSER_PASSWORD = os.getenv("DJANGO_SUPERUSER_PASSWORD", "adminpassword")
-
 INSTALLED_APPS = [
     "polls.apps.PollsConfig",
     "django.contrib.admin",
@@ -159,3 +155,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+def get_superuser_password():
+    ssm = boto3.client('ssm', region_name='us-east-1')
+    response = ssm.get_parameter(
+        Name='django-app-superuser-password',
+        WithDecryption=True
+    )
+    return response['Parameter']['Value']
+
+DJANGO_SUPERUSER_USERNAME = "admin"
+DJANGO_SUPERUSER_EMAIL = "admin@example.com"
+DJANGO_SUPERUSER_PASSWORD = get_superuser_password()

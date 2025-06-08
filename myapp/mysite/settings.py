@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 from pathlib import Path
 import os
 import sys
-import dj_database_url
+import boto3
 from urllib.parse import urlparse
 
 from django.core.management.utils import get_random_secret_key
@@ -87,6 +87,15 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+
+def get_db_password():
+    ssm = boto3.client('ssm', region_name='us-east-1')
+    response = ssm.get_parameter(
+        Name='django-app-db-password',
+        WithDecryption=True
+    )
+    return response['Parameter']['Value']
+
 if os.getenv("DEVELOPMENT_MODE", "False") == "True":
     DATABASES = {
         "default": {
@@ -98,7 +107,14 @@ elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
     if os.getenv("DATABASE_URL", None) is None:
         raise Exception("DATABASE_URL environment variable not defined")
     DATABASES = {
-        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+        "default": {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'mydatabase',
+            'USER': 'myuser',
+            'PASSWORD': get_db_password(),
+            'HOST': os.getenv("DATABASE_HOST", "localhost"),
+            'PORT': '5432',
+        }
     }
 
 
@@ -142,3 +158,4 @@ STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+

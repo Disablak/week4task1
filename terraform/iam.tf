@@ -33,7 +33,7 @@ resource "aws_iam_instance_profile" "ssm_instance_profile" {
   role = aws_iam_role.ssm_role.name
 }
 
-### Added polciy to use password from SSM
+### Permissoin to use password from SSM
 resource "aws_iam_policy" "smm_access_db_password" {
   name = "AccessDBPassword"
 
@@ -61,4 +61,29 @@ resource "aws_iam_policy" "smm_access_db_password" {
 resource "aws_iam_role_policy_attachment" "attach_ssm_to_django_role" {
   role       = aws_iam_role.ssm_role.name
   policy_arn = aws_iam_policy.smm_access_db_password.arn
+}
+
+### Permissions to write logs
+resource "aws_iam_policy" "cloudwatch_logging" {
+  name = "CloudWatchLogging"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_logging" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = aws_iam_policy.cloudwatch_logging.arn
 }

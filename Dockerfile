@@ -1,5 +1,4 @@
-#FROM python:3.12.11-slim-bullseye
-FROM python:3.12.11-alpine
+FROM python:3.12.11-slim-bullseye
 
 # Prevents Python from writing pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -12,8 +11,7 @@ WORKDIR /app
 COPY ./app .
 
 # install libpq-dev for psycopg2-binary from requirements.txt
-#RUN apt-get update && apt-get install -y libpq-dev gcc
-RUN apk add --no-cache gcc postgresql-dev musl-dev python3-dev
+RUN apt-get update && apt-get install -y libpq-dev gcc
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 

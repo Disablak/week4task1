@@ -17,14 +17,14 @@ resource "aws_ecs_task_definition" "app" {
   family                   = "fargate-task"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
     {
       name      = "app"
-      image     = "400375466624.dkr.ecr.us-east-1.amazonaws.com/disablak/django-app:latest" # TODO variable
+      image     = var.app_image
       essential = true
       portMappings = [
         {
@@ -49,6 +49,76 @@ resource "aws_ecs_task_definition" "app" {
         {
           name = "DATABASE_URL"
           value = local.database_url
+        }
+      ]
+    }
+  ])
+}
+
+resource "aws_ecs_task_definition" "migration" {
+  family                   = "django-migration"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "migrate"
+      image     = var.app_image
+      essential = true
+      command   = ["python", "manage.py", "migrate"]
+      environment = [
+        {
+          name  = "DJANGO_ALLOWED_HOSTS"
+          value = aws_lb.app_lb.dns_name
+        },
+        {
+          name = "DATABASE_URL"
+          value = local.database_url
+        }
+      ]
+    }
+  ])
+}
+
+resource "aws_ecs_task_definition" "create_superuser" {
+  family                   = "django-create-superuser"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "create-superuser"
+      image     = var.app_image
+      essential = true
+      command   = ["python", "manage.py", "createsuperuser", "--noinput"]
+      environment = [
+        {
+          name  = "DJANGO_ALLOWED_HOSTS"
+          value = aws_lb.app_lb.dns_name
+        },
+        {
+          name = "DATABASE_URL"
+          value = local.database_url
+        },
+        {
+          name = "DJANGO_SUPERUSER_USERNAME"
+          value = var.superuser_username
+        },
+        {
+          name = "DJANGO_SUPERUSER_PASSWORD"
+          value = var.superuser_password
+        },
+        {
+          name = "DJANGO_SUPERUSER_EMAIL"
+          value = var.superuser_email
         }
       ]
     }

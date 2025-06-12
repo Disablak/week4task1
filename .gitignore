@@ -2,3 +2,4 @@ db.sqlite3
 *.pyc
 staticfiles/
 *.terraform
+db_creds.tfvars

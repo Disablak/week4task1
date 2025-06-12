@@ -2,6 +2,17 @@ resource "aws_ecs_cluster" "fargate_cluster" {
   name = "my-fargate-cluster"
 }
 
+locals {
+  database_url = format(
+    "postgres://%s:%s@%s:%s/%s",
+    var.db_username,
+    var.db_password,
+    aws_db_instance.postgres.address,
+    5432,
+    var.db_name
+  )
+}
+
 resource "aws_ecs_task_definition" "app" {
   family                   = "fargate-task"
   requires_compatibilities = ["FARGATE"]
@@ -25,23 +36,27 @@ resource "aws_ecs_task_definition" "app" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-            awslogs-group         = "/ecs/fargate-app"
-            awslogs-region        = "us-east-1"
-            awslogs-stream-prefix = "ecs"
+          awslogs-group         = "/ecs/fargate-app"
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs"
         }
       }
       environment = [
         {
           name  = "DJANGO_ALLOWED_HOSTS"
           value = aws_lb.app_lb.dns_name
+        },
+        {
+          name = "DATABASE_URL"
+          value = local.database_url
         }
       ]
     }
   ])
 }
 
-resource "aws_security_group" "fargate_sg" {
-  name   = "fargate-sg"
+resource "aws_security_group" "ecs_sg" {
+  name   = "ecs-sg"
   vpc_id = module.vpc.vpc_id
 
   ingress {
@@ -68,7 +83,7 @@ resource "aws_ecs_service" "app" {
 
   network_configuration {
     subnets         = module.vpc.public_subnets
-    security_groups = [aws_security_group.fargate_sg.id]
+    security_groups = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
 

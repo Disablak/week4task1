@@ -19,10 +19,44 @@ resource "aws_ecs_task_definition" "app" {
         {
           containerPort = 8000
           hostPort      = 8000
+          protocol      = "tcp"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+            awslogs-group         = "/ecs/fargate-app"
+            awslogs-region        = "us-east-1"
+            awslogs-stream-prefix = "ecs"
+        }
+      }
+      environment = [
+        {
+          name  = "DJANGO_ALLOWED_HOSTS"
+          value = aws_lb.app_lb.dns_name
         }
       ]
     }
   ])
+}
+
+resource "aws_security_group" "fargate_sg" {
+  name   = "fargate-sg"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_ecs_service" "app" {

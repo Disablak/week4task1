@@ -5,8 +5,6 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Prevents Python from buffering stdout and stderr
 ENV PYTHONUNBUFFERED=1
 
-ENV DEVELOPMENT_MODE=True
-
 WORKDIR /app
 
 COPY ./app .
@@ -24,4 +22,4 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]

@@ -43,12 +43,20 @@ resource "aws_ecs_task_definition" "app" {
       }
       environment = [
         {
+          name = "DEBUG"
+          value = "True"
+        },
+        {
           name  = "DJANGO_ALLOWED_HOSTS"
-          value = aws_lb.app_lb.dns_name
+          value = "*"  # test
         },
         {
           name = "DATABASE_URL"
           value = local.database_url
+        },
+        {
+          name = "CSRF_TRUSTED_ORIGINS"
+          value = "http://${aws_lb.app_lb.dns_name}"
         }
       ]
     }
@@ -70,6 +78,14 @@ resource "aws_ecs_task_definition" "migration" {
       image     = var.app_image
       essential = true
       command   = ["python", "manage.py", "migrate"]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/django-migration"
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
       environment = [
         {
           name  = "DJANGO_ALLOWED_HOSTS"
@@ -78,6 +94,10 @@ resource "aws_ecs_task_definition" "migration" {
         {
           name = "DATABASE_URL"
           value = local.database_url
+        },
+        {
+          name = "CSRF_TRUSTED_ORIGINS"
+          value = "http://${aws_lb.app_lb.dns_name}"
         }
       ]
     }
@@ -99,10 +119,22 @@ resource "aws_ecs_task_definition" "create_superuser" {
       image     = var.app_image
       essential = true
       command   = ["python", "manage.py", "createsuperuser", "--noinput"]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/django-create-superuser"
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
       environment = [
         {
           name  = "DJANGO_ALLOWED_HOSTS"
           value = aws_lb.app_lb.dns_name
+        },
+        {
+          name = "CSRF_TRUSTED_ORIGINS"
+          value = "http://${aws_lb.app_lb.dns_name}"
         },
         {
           name = "DATABASE_URL"

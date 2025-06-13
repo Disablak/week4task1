@@ -43,12 +43,8 @@ resource "aws_ecs_task_definition" "app" {
       }
       environment = [
         {
-          name = "DEBUG"
-          value = "True"
-        },
-        {
           name  = "DJANGO_ALLOWED_HOSTS"
-          value = "*"  # test
+          value = aws_lb.app_lb.dns_name
         },
         {
           name = "DATABASE_URL"

@@ -32,16 +32,13 @@ variable "db_name" {
 
 variable "superuser_username" {
   type = string
-  default = "admin"
 }
 
 variable "superuser_password" {
   type = string
   sensitive = true
-  default = "password"
 }
 
 variable "superuser_email" {
   type = string
-  default = "some@mail.com"
 }

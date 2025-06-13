@@ -1,0 +1,9 @@
+#!/bin/bash
+
+TASK_DEFINITION=$1
+
+aws ecs run-task \
+  --cluster my-fargate-cluster \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[${public_subnet_0},${public_subnet_1}],securityGroups=[${security_group}],assignPublicIp=ENABLED}" \
+  --task-definition "$TASK_DEFINITION"

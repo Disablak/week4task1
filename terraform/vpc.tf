@@ -10,7 +10,7 @@ module "vpc" {
   private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]
 
 # One NAT Gateway
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway = false
+  single_nat_gateway = false
   one_nat_gateway_per_az = false
 }

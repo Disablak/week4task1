@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 resource "aws_ecs_task_definition" "migration" {
-  family                   = "django-migration"
+  family                   = "migration"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
@@ -101,7 +101,7 @@ resource "aws_ecs_task_definition" "migration" {
 }
 
 resource "aws_ecs_task_definition" "create_superuser" {
-  family                   = "django-create-superuser"
+  family                   = "create-superuser"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu

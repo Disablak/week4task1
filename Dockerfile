@@ -1,30 +1,27 @@
-# ----------- BUILD STAGE -------------
-FROM python:3.13.5-slim-bookworm AS builder
+FROM python:3.13.5-alpine3.22
 
 WORKDIR /usr/src/app
 COPY ./app .
 
-ENV PYTHONPATH="/install/lib/python3.13/site-packages:\$PYTHONPATH"
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps postgresql-dev build-base \
+    && python -m venv /env \
+    && /env/bin/pip install --upgrade pip \
+    && /env/bin/pip install --no-cache-dir -r requirements.txt \
+    && /env/bin/python manage.py collectstatic --noinput \
+    && runDeps="$(scanelf --needed --nobanner --recursive /env \
+        | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+        | sort -u \
+        | xargs -r apk info --installed \
+        | sort -u)" \
+    && apk add --virtual rundeps $runDeps \
+    && apk del .build-deps \
+    && addgroup --system appuser \
+    && adduser --system --ingroup appuser appuser \
+    && chown -R appuser:appuser /usr/src/app
 
-RUN apt-get update && \
-    apt-get install -y libpq-dev gcc && \
-    pip install --upgrade pip && \
-    pip install --prefix=/install --requirement requirements.txt && \
-    python manage.py collectstatic --noinput
-
-# ----------- FINAL STAGE -------------
-FROM python:3.13.5-slim-bookworm
-
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app .
-COPY --from=builder /install /usr/local
-
-RUN addgroup --system appuser && \
-    adduser --system --ingroup appuser appuser && \
-    chown -R appuser:appuser /usr/src/app
+ENV VIRTUAL_ENV=/env
+ENV PATH=/env/bin:$PATH
 
 USER appuser
 

@@ -5,9 +5,9 @@ WORKDIR /usr/src/app
 COPY ./app .
 
 RUN set -ex \
-    && apk add --no-cache --virtual .build-deps postgresql-dev build-base \
-    && pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt \
+    && apk add --no-cache --virtual .build-deps curl postgresql-dev build-base \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && /root/.local/bin/uv pip install --system -r requirements.txt \
     && python manage.py collectstatic --noinput \
     && apk del .build-deps
 

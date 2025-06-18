@@ -3,3 +3,4 @@ db.sqlite3
 staticfiles/
 *.terraform
 db_creds.tfvars
+env

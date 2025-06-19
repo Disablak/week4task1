@@ -18,8 +18,10 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app .
 COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
+COPY entrypoint.sh /entrypoint.sh
 
-RUN addgroup --system appuser \
+RUN chmod +x /entrypoint.sh \
+    && addgroup --system appuser \
     && adduser --system --ingroup appuser appuser \
     && chown -R appuser:appuser /usr/src/app
 
